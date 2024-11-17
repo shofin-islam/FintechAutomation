@@ -1,0 +1,34 @@
+<!-- testng.xml -->
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="Parallel Execution Suite" parallel="tests" thread-count="2">
+    <test name="Web Tests - chrome">
+        <parameter name="type" value="web"/>
+        <parameter name="platformOrBrowser" value="chrome"/>
+        <parameter name="deviceName" value=""/>
+        <parameter name="udid" value=""/>
+        <classes>
+            <class name="web.SampleWebTest"/>
+        </classes>
+    </test>
+    <!-- 
+    <test name="Mobile Tests">
+        <parameter name="type" value="mobile"/>
+        <parameter name="platformOrBrowser" value="android"/>
+        <parameter name="deviceName" value="emulator-5554"/>
+        <parameter name="udid" value="emulator-5554"/>
+        <classes>
+            <class name="SampleMobileTest"/>
+        </classes>
+    </test>
+    -->
+    <test name="Web Tests - firefox">
+        <parameter name="type" value="web"/>
+        <parameter name="platformOrBrowser" value="firefox"/>
+        <parameter name="deviceName" value=""/>
+        <parameter name="udid" value=""/>
+        <classes>
+            <class name="web.SampleWebTest"/>
+        </classes>
+    </test>
+    
+</suite>
