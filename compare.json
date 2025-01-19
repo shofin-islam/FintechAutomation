@@ -1,0 +1,8 @@
+{
+  "executionSuite": "NCC Services Request Execution Suite Round 2.xlsx",
+  "openProjectData": "OP_Bug_List_Service_Request.xlsx",
+  "UniqueBugLinksSheetName": "UniqueBugLinks",
+  "openProjectSheetName": "Work packages",
+  "executionIdColumnIndex": 0,
+  "openProjectIdColumnIndex": 0
+}
