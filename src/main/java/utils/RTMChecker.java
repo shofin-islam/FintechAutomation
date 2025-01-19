@@ -75,8 +75,7 @@ public class RTMChecker {
         ex1Workbook.close();
         ex2Workbook.close();
 
-        System.out.println("Comparison complete. Files saved:");
-        System.out.println(comparedFilePath);
+        System.out.println("Comparison complete. Files saved: "+comparedFilePath);
     }
 
  // Load configuration JSON from the specified path
