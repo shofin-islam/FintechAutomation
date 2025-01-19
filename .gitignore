@@ -3,3 +3,6 @@
 /src/main/resources/files/excel_comparator/
 Results
 test-output
+src/main/resources/files/excel_comparator/*.xlsx
+src/main/java/.DS_Store
+*.xlsx
