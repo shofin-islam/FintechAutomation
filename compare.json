@@ -1,5 +1,6 @@
 {
   "executionSuite": "NCC Services Request Execution Suite Round 2.xlsx",
+  "rtmSheetsToSkip": "Cover Page, Cover_Page, uniq_items",
   "openProjectData": "OP_Bug_List_Service_Request.xlsx",
   "UniqueBugLinksSheetName": "UniqueBugLinks",
   "openProjectSheetName": "Work packages",

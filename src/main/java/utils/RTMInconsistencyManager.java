@@ -74,7 +74,7 @@ public class RTMInconsistencyManager {
 
 			
 		// Generate dynamic file names
-		String timestamp = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss").format(LocalDateTime.now());
+		String timestamp = dynamicDateTime();
 		
 		String comparedFilePath = outputDir + "Compared_" + timestamp + ".xlsx";
 		String missingBugDetailsFilePath = outputDir + "MissingBugDetails_" + timestamp + ".xlsx";

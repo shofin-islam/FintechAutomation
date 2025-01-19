@@ -19,14 +19,16 @@ public class RTMChecker {
     static String projectDir = System.getProperty("user.dir");
     static String fileDir;
     static String baseDir; // Base directory for files outside the project
+    static String timestamp;
+    static JsonNode config;
 
     public static void main(String[] args) throws Exception {
         // Initialize base directory (external location for inputs and outputs)
 //    	baseDir = Paths.get(System.getProperty("user.dir")).getParent().toString() + File.separator;
         baseDir = System.getProperty("user.dir") + File.separator;
-
+        timestamp = dynamicDateTime();
         // Load the JSON configuration file
-        JsonNode config = loadConfig(baseDir + "compare.json");
+        config = loadConfig(baseDir + "compare.json");
 
         // Extract file paths and configuration values from JSON
         String executionSuiteFile = baseDir + config.get("executionSuite").asText();
@@ -61,7 +63,7 @@ public class RTMChecker {
         System.out.println("ex1Ids count: " + ex1Ids.size());
 
         // Generate dynamic file names for outputs
-        String timestamp = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss").format(LocalDateTime.now());
+       
         String comparedFilePath = resultDir + "Compared_" + timestamp + ".xlsx";
         String missingBugDetailsFilePath = resultDir + "MissingBugDetails_" + timestamp + ".xlsx";
 
@@ -74,8 +76,10 @@ public class RTMChecker {
 
         ex1Workbook.close();
         ex2Workbook.close();
+        
+        System.out.println("Comparison complete. Files Saved: "+comparedFilePath);
 
-        System.out.println("Comparison complete. Files saved: "+comparedFilePath);
+        System.out.println("Missing bug List Files Saved: "+missingBugDetailsFilePath);
     }
 
  // Load configuration JSON from the specified path
@@ -89,9 +93,6 @@ public class RTMChecker {
 
         return objectMapper.readTree(configFile);
     }
-
-
-
 
 
     public static Set<String> getIdsFromSheet(Sheet sheetName, int columnIndex) throws IOException {
@@ -114,37 +115,59 @@ public class RTMChecker {
 
         List<List<String>> missingBugDetails = new ArrayList<>();
         missingBugDetails.add(Arrays.asList("Bug ID", "Subject", "Status", "Author", "Link"));
+        
+        
+        Row headerRow = sheet.getRow(0);
+        if (headerRow != null) {
+            // Get the number of cells in the row
+            int totalCells = headerRow.getLastCellNum();
+            System.out.println("Total Cells in the Row: " + totalCells);
 
-        try {
-            Row headerRow = sheet.getRow(0);
-            int comparisonColumnIndex = headerRow.getLastCellNum();
-            System.out.println("last column index " + comparisonColumnIndex);
-            headerRow.createCell(comparisonColumnIndex).setCellValue("Comparison Result");
+            // Iterate over each cell in the row
+            for (int cellIndex = 0; cellIndex < totalCells; cellIndex++) {
+                Cell cell = headerRow.getCell(cellIndex);
 
-            for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue;
-                Cell idCell = row.getCell(idColumnIndex);
-                Cell comparisonCell = row.createCell(comparisonColumnIndex);
+                // Get the cell value as a string (use your utility if needed)
+                String cellValue = (cell != null) ? getCellValueAsString(cell) : "EMPTY";
 
-                if (idCell != null) {
-                    String id = getCellValueAsString(idCell).trim();
-                    if (comparisonSet.contains(id)) {
-                        comparisonCell.setCellValue("Exist");
-                    } else {
-                        comparisonCell.setCellValue("Not Exist");
-                        missingBugDetails.add(Arrays.asList(id,
-                                getCellValueAsString(row.getCell(1)),
-                                getCellValueAsString(row.getCell(3)),
-                                getCellValueAsString(row.getCell(4)),
-                                "https://fintech-bs23.xyz/wp/" + id));
-                    }
-                } else {
-                    comparisonCell.setCellValue("Not Executed");
-                }
+                // Print the cell index and value
+                System.out.println("Cell Index: " + cellIndex + ", Value: " + cellValue);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("Row is null or does not exist.");
         }
+
+//        try {
+//            Row headerRow = sheet.getRow(0);
+//            int comparisonColumnIndex = headerRow.getLastCellNum();
+//            System.out.println("RTM Last Cell Number " + comparisonColumnIndex);
+//            
+//            headerRow.createCell(comparisonColumnIndex).setCellValue("Comparison Result");
+//
+//            for (Row row : sheet) {
+//                if (row.getRowNum() == 0) continue;
+//                Cell idCell = row.getCell(idColumnIndex);
+//                Cell comparisonCell = row.createCell(comparisonColumnIndex);
+//
+//                if (idCell != null) {
+//                    String id = getCellValueAsString(idCell).trim();
+//                    if (comparisonSet.contains(id)) {
+//                        comparisonCell.setCellValue("Exist");
+//                    } else {
+//                        comparisonCell.setCellValue("Not Exist");
+//                        missingBugDetails.add(Arrays.asList(id,
+//                                getCellValueAsString(row.getCell(1)),
+//                                getCellValueAsString(row.getCell(3)),
+//                                getCellValueAsString(row.getCell(4)),
+//                                "https://fintech-bs23.xyz/wp/" + id));
+//                    }
+//                } else {
+//                    comparisonCell.setCellValue("Not Executed");
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         try {
             writeListToExcel(outputFilePath, "bug_details", missingBugDetails);
@@ -182,39 +205,48 @@ public class RTMChecker {
         try (FileInputStream fis = new FileInputStream(new File(filePath));
              Workbook workbook = new XSSFWorkbook(fis)) {
 
-            for (Sheet sheet : workbook) {
-                String sheetName = sheet.getSheetName();
-                if (sheetName.equalsIgnoreCase("cover_page") || sheetName.equalsIgnoreCase("cover page") || sheetName.equalsIgnoreCase("uniq_items")) {
-                    continue;
-                }
+        	// Fetch the skip list string from the configuration
+        	String skipSheetsString = config.get("UniqueBugLinksSheetName").asText();
 
-                for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-                    Row row = sheet.getRow(rowIndex);
-                    if (row == null) continue;
+        	// Convert the comma-separated string into a list
+        	List<String> sheetsToSkip = Arrays.asList(skipSheetsString.split(",\\s*"));
 
-                    Cell bugLinkCell = row.getCell(10);
-                    String bugLink = getCellValueAsString(bugLinkCell);
+        	for (Sheet sheet : workbook) {
+        	    String sheetName = sheet.getSheetName();
 
-                    Cell statusCell = row.getCell(8);
-                    String status = getCellValueAsString(statusCell);
+        	    // Check if the sheet name is in the skip list (case-insensitive)
+        	    if (sheetsToSkip.stream().anyMatch(skipName -> skipName.equalsIgnoreCase(sheetName))) {
+        	        continue;
+        	    }
 
-                    if (!bugLink.isEmpty()) {
-                        Pattern urlPattern = Pattern.compile("(https?://[\\w.-]+(/[\\w./-]*)?)");
-                        Matcher matcher = urlPattern.matcher(bugLink);
+        	    for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+        	        Row row = sheet.getRow(rowIndex);
+        	        if (row == null) continue;
 
-                        while (matcher.find()) {
-                            String extractedLink = matcher.group().trim();
-                            if (!extractedLink.isEmpty() && uniqueBugLinks.add(extractedLink)) {
-                                String bugId = getBugIdFromLink(extractedLink);
-                                outputData.add(Arrays.asList(bugId, sheetName, extractedLink, status));
-                            }
-                        }
-                    }
-                }
-            }
+        	        Cell bugLinkCell = row.getCell(10);
+        	        String bugLink = getCellValueAsString(bugLinkCell);
+
+        	        Cell statusCell = row.getCell(8);
+        	        String status = getCellValueAsString(statusCell);
+
+        	        if (!bugLink.isEmpty()) {
+        	            Pattern urlPattern = Pattern.compile("(https?://[\\w.-]+(/[\\w./-]*)?)");
+        	            Matcher matcher = urlPattern.matcher(bugLink);
+
+        	            while (matcher.find()) {
+        	                String extractedLink = matcher.group().trim();
+        	                if (!extractedLink.isEmpty() && uniqueBugLinks.add(extractedLink)) {
+        	                    String bugId = getBugIdFromLink(extractedLink);
+        	                    outputData.add(Arrays.asList(bugId, sheetName, extractedLink, status));
+        	                }
+        	            }
+        	        }
+        	    }
+        	}
+
         }
 
-        String outputFile = outputDir + dynamicDateTime() + "_UniqueBugLinks.xlsx";
+        String outputFile = outputDir + "UniqueBugLinks_"+timestamp.toString() + ".xlsx";
         writeListToExcel(outputFile, outputFileSheetName, outputData);
 
         return outputFile;
@@ -337,9 +369,9 @@ public class RTMChecker {
 		}
 
 		// Write output to a new Excel file
-		String outputFile = outputDir + dynamicDateTime() + "_NA_Fail_Failed_Report.xlsx";
-		writeListToExcel(outputFile, "NA_Fail_Failed_Report", outputData);
+		String outputFileNaFail = outputDir + "NA_and_Fail_Report_"+timestamp.toString() + ".xlsx";
+		writeListToExcel(outputFileNaFail, "NA_and_Fail_Report", outputData);
 
-		System.out.println("NA Fail Failed Report written to: " + outputFile);
+		System.out.println("NA and Fail Report written to: " + outputFileNaFail);
 	}
 }
