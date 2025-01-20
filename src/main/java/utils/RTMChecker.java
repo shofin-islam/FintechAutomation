@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 public class RTMChecker {
 
     static String projectDir = System.getProperty("user.dir");
-    static String fileDir;
     static String baseDir; // Base directory for files outside the project
     static String timestamp;
     static JsonNode config;

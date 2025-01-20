@@ -2,84 +2,12 @@
 <testng-results ignored="0" total="4" passed="4" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2024-12-29T17:22:02 GMT+06:00" name="Parallel Execution Suite" finished-at="2024-12-29T17:22:21 GMT+06:00" duration-ms="18815">
+  <suite started-at="2025-01-21T00:27:39 GMT+06:00" name="Parallel Execution Suite" finished-at="2025-01-21T00:28:04 GMT+06:00" duration-ms="24653">
     <groups>
     </groups>
-    <test started-at="2024-12-29T17:22:02 GMT+06:00" name="Web Tests - chrome" finished-at="2024-12-29T17:22:19 GMT+06:00" duration-ms="16930">
+    <test started-at="2025-01-21T00:27:39 GMT+06:00" name="Web Tests - firefox" finished-at="2025-01-21T00:27:59 GMT+06:00" duration-ms="20052">
       <class name="web.SampleWebTest">
-        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@77fbd92c]" started-at="2024-12-29T17:22:02 GMT+06:00" name="setUp" finished-at="2024-12-29T17:22:04 GMT+06:00" duration-ms="1660" status="PASS">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[web]]>
-              </value>
-            </param>
-            <param index="1">
-              <value>
-                <![CDATA[chrome]]>
-              </value>
-            </param>
-            <param index="2">
-              <value>
-                <![CDATA[]]>
-              </value>
-            </param>
-            <param index="3">
-              <value>
-                <![CDATA[]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setUp -->
-        <test-method signature="testBingHomePage()[pri:0, instance:web.SampleWebTest@77fbd92c]" started-at="2024-12-29T17:22:04 GMT+06:00" name="testBingHomePage" finished-at="2024-12-29T17:22:11 GMT+06:00" duration-ms="6625" status="PASS">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- testBingHomePage -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@77fbd92c]" started-at="2024-12-29T17:22:11 GMT+06:00" name="tearDown" finished-at="2024-12-29T17:22:11 GMT+06:00" duration-ms="131" status="PASS">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- tearDown -->
-        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@77fbd92c]" started-at="2024-12-29T17:22:11 GMT+06:00" name="setUp" finished-at="2024-12-29T17:22:12 GMT+06:00" duration-ms="736" status="PASS">
-          <params>
-            <param index="0">
-              <value>
-                <![CDATA[web]]>
-              </value>
-            </param>
-            <param index="1">
-              <value>
-                <![CDATA[chrome]]>
-              </value>
-            </param>
-            <param index="2">
-              <value>
-                <![CDATA[]]>
-              </value>
-            </param>
-            <param index="3">
-              <value>
-                <![CDATA[]]>
-              </value>
-            </param>
-          </params>
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- setUp -->
-        <test-method signature="testGoogleHomePage()[pri:0, instance:web.SampleWebTest@77fbd92c]" started-at="2024-12-29T17:22:12 GMT+06:00" name="testGoogleHomePage" finished-at="2024-12-29T17:22:19 GMT+06:00" duration-ms="7656" status="PASS">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- testGoogleHomePage -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@77fbd92c]" started-at="2024-12-29T17:22:19 GMT+06:00" name="tearDown" finished-at="2024-12-29T17:22:19 GMT+06:00" duration-ms="93" status="PASS">
-          <reporter-output>
-          </reporter-output>
-        </test-method> <!-- tearDown -->
-      </class> <!-- web.SampleWebTest -->
-    </test> <!-- Web Tests - chrome -->
-    <test started-at="2024-12-29T17:22:02 GMT+06:00" name="Web Tests - firefox" finished-at="2024-12-29T17:22:21 GMT+06:00" duration-ms="18815">
-      <class name="web.SampleWebTest">
-        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@22555ebf]" started-at="2024-12-29T17:22:02 GMT+06:00" name="setUp" finished-at="2024-12-29T17:22:05 GMT+06:00" duration-ms="2035" status="PASS">
+        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@22ff4249]" started-at="2025-01-21T00:27:39 GMT+06:00" name="setUp" finished-at="2025-01-21T00:27:42 GMT+06:00" duration-ms="2986" status="PASS">
           <params>
             <param index="0">
               <value>
@@ -105,15 +33,15 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="testBingHomePage()[pri:0, instance:web.SampleWebTest@22555ebf]" started-at="2024-12-29T17:22:05 GMT+06:00" name="testBingHomePage" finished-at="2024-12-29T17:22:11 GMT+06:00" duration-ms="6581" status="PASS">
+        <test-method signature="testBingHomePage()[pri:0, instance:web.SampleWebTest@22ff4249]" started-at="2025-01-21T00:27:42 GMT+06:00" name="testBingHomePage" finished-at="2025-01-21T00:27:49 GMT+06:00" duration-ms="6548" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- testBingHomePage -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@22555ebf]" started-at="2024-12-29T17:22:11 GMT+06:00" name="tearDown" finished-at="2024-12-29T17:22:12 GMT+06:00" duration-ms="721" status="PASS">
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@22ff4249]" started-at="2025-01-21T00:27:49 GMT+06:00" name="tearDown" finished-at="2025-01-21T00:27:49 GMT+06:00" duration-ms="901" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@22555ebf]" started-at="2024-12-29T17:22:12 GMT+06:00" name="setUp" finished-at="2024-12-29T17:22:13 GMT+06:00" duration-ms="1494" status="PASS">
+        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@22ff4249]" started-at="2025-01-21T00:27:49 GMT+06:00" name="setUp" finished-at="2025-01-21T00:27:51 GMT+06:00" duration-ms="1615" status="PASS">
           <params>
             <param index="0">
               <value>
@@ -139,15 +67,87 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
-        <test-method signature="testGoogleHomePage()[pri:0, instance:web.SampleWebTest@22555ebf]" started-at="2024-12-29T17:22:13 GMT+06:00" name="testGoogleHomePage" finished-at="2024-12-29T17:22:21 GMT+06:00" duration-ms="7528" status="PASS">
+        <test-method signature="testGoogleHomePage()[pri:0, instance:web.SampleWebTest@22ff4249]" started-at="2025-01-21T00:27:51 GMT+06:00" name="testGoogleHomePage" finished-at="2025-01-21T00:27:59 GMT+06:00" duration-ms="7545" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- testGoogleHomePage -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@22555ebf]" started-at="2024-12-29T17:22:21 GMT+06:00" name="tearDown" finished-at="2024-12-29T17:22:21 GMT+06:00" duration-ms="442" status="PASS">
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@22ff4249]" started-at="2025-01-21T00:27:59 GMT+06:00" name="tearDown" finished-at="2025-01-21T00:27:59 GMT+06:00" duration-ms="437" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
       </class> <!-- web.SampleWebTest -->
     </test> <!-- Web Tests - firefox -->
+    <test started-at="2025-01-21T00:27:39 GMT+06:00" name="Web Tests - chrome" finished-at="2025-01-21T00:28:04 GMT+06:00" duration-ms="24653">
+      <class name="web.SampleWebTest">
+        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T00:27:39 GMT+06:00" name="setUp" finished-at="2025-01-21T00:27:49 GMT+06:00" duration-ms="10217" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[web]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[chrome]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[]]>
+              </value>
+            </param>
+            <param index="3">
+              <value>
+                <![CDATA[]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="testBingHomePage()[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T00:27:49 GMT+06:00" name="testBingHomePage" finished-at="2025-01-21T00:27:56 GMT+06:00" duration-ms="6357" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testBingHomePage -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T00:27:56 GMT+06:00" name="tearDown" finished-at="2025-01-21T00:27:56 GMT+06:00" duration-ms="106" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T00:27:56 GMT+06:00" name="setUp" finished-at="2025-01-21T00:27:57 GMT+06:00" duration-ms="779" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[web]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[chrome]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[]]>
+              </value>
+            </param>
+            <param index="3">
+              <value>
+                <![CDATA[]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="testGoogleHomePage()[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T00:27:57 GMT+06:00" name="testGoogleHomePage" finished-at="2025-01-21T00:28:04 GMT+06:00" duration-ms="7075" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGoogleHomePage -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T00:28:04 GMT+06:00" name="tearDown" finished-at="2025-01-21T00:28:04 GMT+06:00" duration-ms="97" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- web.SampleWebTest -->
+    </test> <!-- Web Tests - chrome -->
   </suite> <!-- Parallel Execution Suite -->
 </testng-results>
