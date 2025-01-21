@@ -8,20 +8,24 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.*;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RTMChecker {
 
-    static String projectDir = System.getProperty("user.dir");
     static String baseDir; // Base directory for files outside the project
     static String timestamp;
     static JsonNode config;
+    static String version = "1.1";
+    static Integer rtmBugLinkColumnIndex;
+    static Integer rtmStatusColumnIndex;
+    static Integer rtmCommentColumnIndex;
 
     public static void main(String[] args) throws Exception {
+    	
+    	System.out.println("Executing RTM Checker Version: "+version);
+    	
         // Initialize base directory (external location for inputs and outputs)
 //    	baseDir = Paths.get(System.getProperty("user.dir")).getParent().toString() + File.separator;
         baseDir = System.getProperty("user.dir") + File.separator;
@@ -34,12 +38,15 @@ public class RTMChecker {
         String openProjectData = baseDir + config.get("openProjectData").asText();
         String bugLinkFileSheetName = config.get("UniqueBugLinksSheetName").asText();
         String openProjectSheet = config.get("openProjectSheetName").asText();
-        String executionIdColumnIndex = config.get("executionIdColumnIndex").asText();
+        String uniqueBugsIdColumnIndex = config.get("uniqueBugsIdColumnIndex").asText();
         String openProjectIdColumnIndex = config.get("openProjectIdColumnIndex").asText();
+        rtmBugLinkColumnIndex = config.get("rtmBugLinkColumnIndex").asInt();
+        rtmStatusColumnIndex = config.get("rtmStatusColumnIndex").asInt();
+        rtmCommentColumnIndex = config.get("rtmCommentColumnIndex").asInt();
 
         // Set up output directories outside the project
         String parentDir = createDynamicFolder(baseDir, "Results", false);
-        String resultDir = createDynamicFolder(parentDir, "Output", true);
+        String resultDir = createDynamicFolder(parentDir, "Output_", true);
 
         // Generate unique bug links file
         String bugLinksFile = getUniqueBugLinksWithSheetNames(executionSuiteFile, resultDir, bugLinkFileSheetName);
@@ -58,8 +65,8 @@ public class RTMChecker {
         Sheet ex2Sheet = ex2Workbook.getSheet(openProjectSheet);
 
         // Read IDs from EX1 (Column A) into a Set
-        Set<String> ex1Ids = getIdsFromSheet(ex1Sheet, Integer.parseInt(executionIdColumnIndex));
-        System.out.println("ex1Ids count: " + ex1Ids.size());
+        Set<String> ex1Ids = getIdsFromSheet(ex1Sheet, Integer.parseInt(uniqueBugsIdColumnIndex));
+        System.out.println("Bug count: " + ex1Ids.size());
 
         // Generate dynamic file names for outputs
        
@@ -76,9 +83,8 @@ public class RTMChecker {
         ex1Workbook.close();
         ex2Workbook.close();
         
-        System.out.println("Comparison complete. Files Saved: "+comparedFilePath);
-
-        System.out.println("Missing bug List Files Saved: "+missingBugDetailsFilePath);
+        System.out.println("Comparison Complete and Files Saved To : "+comparedFilePath);
+        System.out.println("Missing Bug List In RTM Saved To : "+missingBugDetailsFilePath);
     }
 
  // Load configuration JSON from the specified path
@@ -115,7 +121,7 @@ public class RTMChecker {
         List<List<String>> missingBugDetails = new ArrayList<>();
         missingBugDetails.add(Arrays.asList("Bug ID", "Subject", "Status", "Author", "Link"));
         
-        
+        /*
         Row headerRow = sheet.getRow(0);
         if (headerRow != null) {
             // Get the number of cells in the row
@@ -135,41 +141,59 @@ public class RTMChecker {
         } else {
             System.out.println("Row is null or does not exist.");
         }
+        */
 
-//        try {
-//            Row headerRow = sheet.getRow(0);
-//            int comparisonColumnIndex = headerRow.getLastCellNum();
-//            System.out.println("RTM Last Cell Number " + comparisonColumnIndex);
-//            
-//            headerRow.createCell(comparisonColumnIndex).setCellValue("Comparison Result");
-//
-//            for (Row row : sheet) {
-//                if (row.getRowNum() == 0) continue;
-//                Cell idCell = row.getCell(idColumnIndex);
-//                Cell comparisonCell = row.createCell(comparisonColumnIndex);
-//
-//                if (idCell != null) {
-//                    String id = getCellValueAsString(idCell).trim();
-//                    if (comparisonSet.contains(id)) {
-//                        comparisonCell.setCellValue("Exist");
-//                    } else {
-//                        comparisonCell.setCellValue("Not Exist");
-//                        missingBugDetails.add(Arrays.asList(id,
-//                                getCellValueAsString(row.getCell(1)),
-//                                getCellValueAsString(row.getCell(3)),
-//                                getCellValueAsString(row.getCell(4)),
-//                                "https://fintech-bs23.xyz/wp/" + id));
-//                    }
-//                } else {
-//                    comparisonCell.setCellValue("Not Executed");
-//                }
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Row headerRow = sheet.getRow(0);
+            int comparisonColumnIndex = headerRow.getLastCellNum();
+            
+            if (headerRow != null) {
+                // Get the number of cells in the row
+                int totalCells = headerRow.getLastCellNum();
+                System.out.println("Total Cells in the Row: " + totalCells);
+
+                // Iterate over each cell in the row
+                for (int cellIndex = 0; cellIndex < totalCells; cellIndex++) {
+                    Cell cell = headerRow.getCell(cellIndex);
+
+                    // Get the cell value as a string (use your utility if needed)
+                    String cellValue = (cell != null) ? getCellValueAsString(cell) : "EMPTY";
+
+                    // Print the cell index and value
+                    System.out.println("Cell Index: " + cellIndex + ", Value: " + cellValue);
+                }
+            }
+            
+            headerRow.createCell(comparisonColumnIndex).setCellValue("Comparison Result");
+
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                Cell idCell = row.getCell(idColumnIndex);
+                Cell comparisonCell = row.createCell(comparisonColumnIndex);
+
+                if (idCell != null) {
+                    String id = getCellValueAsString(idCell).trim();
+                    if (comparisonSet.contains(id)) {
+                        comparisonCell.setCellValue("Exist");
+                    } else {
+                        comparisonCell.setCellValue("Not Exist");
+                        missingBugDetails.add(Arrays.asList(id,
+                                getCellValueAsString(row.getCell(1)),
+                                getCellValueAsString(row.getCell(3)),
+                                getCellValueAsString(row.getCell(4)),
+                                "https://fintech-bs23.xyz/wp/" + id));
+                    }
+                } else {
+                    comparisonCell.setCellValue("Not Executed");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             writeListToExcel(outputFilePath, "bug_details", missingBugDetails);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -222,10 +246,10 @@ public class RTMChecker {
         	        Row row = sheet.getRow(rowIndex);
         	        if (row == null) continue;
 
-        	        Cell bugLinkCell = row.getCell(10);
+        	        Cell bugLinkCell = row.getCell(rtmBugLinkColumnIndex);
         	        String bugLink = getCellValueAsString(bugLinkCell);
 
-        	        Cell statusCell = row.getCell(8);
+        	        Cell statusCell = row.getCell(rtmStatusColumnIndex);
         	        String status = getCellValueAsString(statusCell);
 
         	        if (!bugLink.isEmpty()) {
@@ -324,7 +348,7 @@ public class RTMChecker {
 					Row row = sheet.getRow(rowIndex);
 					if (row == null) continue;
 
-					Cell statusCell = row.getCell(8); // Column I
+					Cell statusCell = row.getCell(rtmStatusColumnIndex); // Column I
 					if (statusCell == null) continue;
 
 					String statusValue = getCellValueAsString(statusCell).trim(); // Trim to remove extra spaces
@@ -340,13 +364,13 @@ public class RTMChecker {
 
 						if ("NA".equalsIgnoreCase(statusValue)) {
 							matchedType = "NA";
-							Cell valueComment = row.getCell(9); // Column J
+							Cell valueComment = row.getCell(rtmCommentColumnIndex); // Column J
 							if (valueComment != null) {
 								extractedValue = getCellValueAsString(valueComment);
 							}
 						} else if ("Fail".equalsIgnoreCase(statusValue)) {
 							matchedType = "Fail";
-							Cell valueBugs = row.getCell(10); // Column K
+							Cell valueBugs = row.getCell(rtmBugLinkColumnIndex); // Column K
 							if (valueBugs != null) {
 								extractedValue = getCellValueAsString(valueBugs);
 							}
@@ -369,7 +393,7 @@ public class RTMChecker {
 
 		// Write output to a new Excel file
 		String outputFileNaFail = outputDir + "NA_and_Fail_Report_"+timestamp.toString() + ".xlsx";
-		writeListToExcel(outputFileNaFail, "NA_and_Fail_Report", outputData);
+		writeListToExcel(outputFileNaFail, "AnalyticalReport ", outputData);
 
 		System.out.println("NA and Fail Report written to: " + outputFileNaFail);
 	}

@@ -1,9 +1,12 @@
 {
   "executionSuite": "NCC Services Request Execution Suite Round 2.xlsx",
   "rtmSheetsToSkip": "Cover Page, Cover_Page, uniq_items",
+  "rtmStatusColumnIndex":8,
+  "rtmCommentColumnIndex":9,
+  "rtmBugLinkColumnIndex":10,
   "openProjectData": "OP_Bug_List_Service_Request.xlsx",
   "UniqueBugLinksSheetName": "UniqueBugLinks",
   "openProjectSheetName": "Work packages",
-  "executionIdColumnIndex": 0,
+  "uniqueBugsIdColumnIndex": 0,
   "openProjectIdColumnIndex": 0
 }
