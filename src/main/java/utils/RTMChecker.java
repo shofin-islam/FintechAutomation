@@ -14,114 +14,113 @@ import java.util.regex.Pattern;
 
 public class RTMChecker {
 
-    static String baseDir; // Base directory for files outside the project
-    static String timestamp;
-    static JsonNode config;
-    static String version = "1.1";
-    static Integer rtmBugLinkColumnIndex;
-    static Integer rtmStatusColumnIndex;
-    static Integer rtmCommentColumnIndex;
+	static String baseDir; // Base directory for files outside the project
+	static String timestamp;
+	static JsonNode config;
+	static String version = "1.1";
+	static Integer rtmBugLinkColumnIndex;
+	static Integer rtmStatusColumnIndex;
+	static Integer rtmCommentColumnIndex;
 
-    public static void main(String[] args) throws Exception {
-    	
-    	System.out.println("Executing RTM Checker Version: "+version);
-    	
-        // Initialize base directory (external location for inputs and outputs)
-//    	baseDir = Paths.get(System.getProperty("user.dir")).getParent().toString() + File.separator;
-        baseDir = System.getProperty("user.dir") + File.separator;
-        timestamp = dynamicDateTime();
-        // Load the JSON configuration file
-        config = loadConfig(baseDir + "compare.json");
+	public static void main(String[] args) throws Exception {
 
-        // Extract file paths and configuration values from JSON
-        String executionSuiteFile = baseDir + config.get("executionSuite").asText();
-        String openProjectData = baseDir + config.get("openProjectData").asText();
-        String bugLinkFileSheetName = config.get("UniqueBugLinksSheetName").asText();
-        String openProjectSheet = config.get("openProjectSheetName").asText();
-        String uniqueBugsIdColumnIndex = config.get("uniqueBugsIdColumnIndex").asText();
-        String openProjectIdColumnIndex = config.get("openProjectIdColumnIndex").asText();
-        rtmBugLinkColumnIndex = config.get("rtmBugLinkColumnIndex").asInt();
-        rtmStatusColumnIndex = config.get("rtmStatusColumnIndex").asInt();
-        rtmCommentColumnIndex = config.get("rtmCommentColumnIndex").asInt();
+		System.out.println("Executing RTM Checker Version: "+version);
 
-        // Set up output directories outside the project
-        String parentDir = createDynamicFolder(baseDir, "Results", false);
-        String resultDir = createDynamicFolder(parentDir, "Output_", true);
+		// Initialize base directory (external location for inputs and outputs)
+		//    	baseDir = Paths.get(System.getProperty("user.dir")).getParent().toString() + File.separator;
+		baseDir = System.getProperty("user.dir") + File.separator;
+		timestamp = dynamicDateTime();
+		// Load the JSON configuration file
+		config = loadConfig(baseDir + "compare.json");
 
-        // Generate unique bug links file
-        String bugLinksFile = getUniqueBugLinksWithSheetNames(executionSuiteFile, resultDir, bugLinkFileSheetName);
-        System.out.println("Unique bug links written to: " + bugLinksFile);
-        processSheetsForNAAndFail(executionSuiteFile, resultDir);
+		// Extract file paths and configuration values from JSON
+		String executionSuiteFile = baseDir + config.get("executionSuite").asText();
+		String openProjectData = baseDir + config.get("openProjectData").asText();
+		String bugLinkFileSheetName = config.get("UniqueBugLinksSheetName").asText();
+		String openProjectSheet = config.get("openProjectSheetName").asText();
+		String uniqueBugsIdColumnIndex = config.get("uniqueBugsIdColumnIndex").asText();
+		String openProjectIdColumnIndex = config.get("openProjectIdColumnIndex").asText();
+		rtmBugLinkColumnIndex = config.get("rtmBugLinkColumnIndex").asInt();
+		rtmStatusColumnIndex = config.get("rtmStatusColumnIndex").asInt();
+		rtmCommentColumnIndex = config.get("rtmCommentColumnIndex").asInt();
 
-        // Handle file operations
-        handleFile(executionSuiteFile, resultDir, false);
+		// Set up output directories outside the project
+		String parentDir = createDynamicFolder(baseDir, "Results", false);
+		String resultDir = createDynamicFolder(parentDir, "Output_", true);
 
-        // Load EX1 and EX2 files
-        Workbook ex1Workbook = new XSSFWorkbook(new FileInputStream(bugLinksFile));
-        Workbook ex2Workbook = new XSSFWorkbook(new FileInputStream(openProjectData));
+		// Generate unique bug links file
+		String bugLinksFile = getUniqueBugLinksWithSheetNames(executionSuiteFile, resultDir, bugLinkFileSheetName);
+		System.out.println("Unique bug links written to: " + bugLinksFile);
+		processSheetsForNAAndFail(executionSuiteFile, resultDir);
 
-        // Get sheets
-        Sheet ex1Sheet = ex1Workbook.getSheet(bugLinkFileSheetName);
-        Sheet ex2Sheet = ex2Workbook.getSheet(openProjectSheet);
+		// Handle file operations
+		handleFile(executionSuiteFile, resultDir, false);
 
-        // Read IDs from EX1 (Column A) into a Set
-        Set<String> ex1Ids = getIdsFromSheet(ex1Sheet, Integer.parseInt(uniqueBugsIdColumnIndex));
-        System.out.println("Bug count: " + ex1Ids.size());
+		// Load EX1 and EX2 files
+		Workbook ex1Workbook = new XSSFWorkbook(new FileInputStream(bugLinksFile));
+		Workbook ex2Workbook = new XSSFWorkbook(new FileInputStream(openProjectData));
 
-        // Generate dynamic file names for outputs
-       
-        String comparedFilePath = resultDir + "Compared_" + timestamp + ".xlsx";
-        String missingBugDetailsFilePath = resultDir + "MissingBugDetails_" + timestamp + ".xlsx";
+		// Get sheets
+		Sheet ex1Sheet = ex1Workbook.getSheet(bugLinkFileSheetName);
+		Sheet ex2Sheet = ex2Workbook.getSheet(openProjectSheet);
 
-        compareAndAddColumn(ex2Sheet, Integer.parseInt(openProjectIdColumnIndex), ex1Ids, missingBugDetailsFilePath);
+		// Read IDs from EX1 (Column A) into a Set
+		Set<String> ex1Ids = getIdsFromSheet(ex1Sheet, Integer.parseInt(uniqueBugsIdColumnIndex));
+		System.out.println("Bug count: " + ex1Ids.size());
 
-        // Write the comparison result to a file
-        try (FileOutputStream comp = new FileOutputStream(comparedFilePath)) {
-            ex2Workbook.write(comp);
-        }
+		// Generate dynamic file names for outputs
 
-        ex1Workbook.close();
-        ex2Workbook.close();
-        
-        System.out.println("Comparison Complete and Files Saved To : "+comparedFilePath);
-        System.out.println("Missing Bug List In RTM Saved To : "+missingBugDetailsFilePath);
-    }
+		String comparedFilePath = resultDir + "Compared_" + timestamp + ".xlsx";
+		String missingBugDetailsFilePath = resultDir + "MissingBugDetails_" + timestamp + ".xlsx";
 
- // Load configuration JSON from the specified path
-    private static JsonNode loadConfig(String configFilePath) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        File configFile = new File(configFilePath);
+		compareAndAddColumn(ex2Sheet, Integer.parseInt(openProjectIdColumnIndex), ex1Ids, missingBugDetailsFilePath);
 
-        if (!configFile.exists()) {
-            throw new FileNotFoundException("Configuration file not found at: " + configFile.getAbsolutePath());
-        }
+		// Write the comparison result to a file
+		try (FileOutputStream comp = new FileOutputStream(comparedFilePath)) {
+			ex2Workbook.write(comp);
+		}
 
-        return objectMapper.readTree(configFile);
-    }
+		ex1Workbook.close();
+		ex2Workbook.close();
 
+		System.out.println("Comparison Complete and Files Saved To : "+comparedFilePath);
+		System.out.println("Missing Bug List In RTM Saved To : "+missingBugDetailsFilePath);
+	}
 
-    public static Set<String> getIdsFromSheet(Sheet sheetName, int columnIndex) throws IOException {
-        Set<String> ids = new HashSet<>();
-        if (sheetName == null) throw new IllegalArgumentException("Sheet " + sheetName + " does not exist.");
+	// Load configuration JSON from the specified path
+	private static JsonNode loadConfig(String configFilePath) throws IOException {
+		ObjectMapper objectMapper = new ObjectMapper();
+		File configFile = new File(configFilePath);
 
-        for (Row row : sheetName) {
-            if (row.getRowNum() == 0) continue; // Skip header row
-            Cell cell = row.getCell(columnIndex);
-            if (cell != null) {
-                String cellValue = getCellValueAsString(cell).trim();
-                if (!cellValue.isEmpty()) ids.add(cellValue);
-            }
-        }
-        return ids;
-    }
+		if (!configFile.exists()) {
+			throw new FileNotFoundException("Configuration file not found at: " + configFile.getAbsolutePath());
+		}
 
-    public static void compareAndAddColumn(Sheet sheet, int idColumnIndex,
-                                            Set<String> comparisonSet, String outputFilePath) throws IOException {
+		return objectMapper.readTree(configFile);
+	}
 
-        List<List<String>> missingBugDetails = new ArrayList<>();
-        missingBugDetails.add(Arrays.asList("Bug ID", "Subject", "Status", "Author", "Link"));
-        
-        /*
+	public static Set<String> getIdsFromSheet(Sheet sheetName, int columnIndex) throws IOException {
+		Set<String> ids = new HashSet<>();
+		if (sheetName == null) throw new IllegalArgumentException("Sheet " + sheetName + " does not exist.");
+
+		for (Row row : sheetName) {
+			if (row.getRowNum() == 0) continue; // Skip header row
+			Cell cell = row.getCell(columnIndex);
+			if (cell != null) {
+				String cellValue = getCellValueAsString(cell).trim();
+				if (!cellValue.isEmpty()) ids.add(cellValue);
+			}
+		}
+		return ids;
+	}
+
+	public static void compareAndAddColumn(Sheet sheet, int idColumnIndex,
+			Set<String> comparisonSet, String outputFilePath) throws IOException {
+
+		List<List<String>> missingBugDetails = new ArrayList<>();
+		missingBugDetails.add(Arrays.asList("Bug ID", "Subject", "Status", "Author", "Link"));
+
+		/*
         Row headerRow = sheet.getRow(0);
         if (headerRow != null) {
             // Get the number of cells in the row
@@ -141,200 +140,219 @@ public class RTMChecker {
         } else {
             System.out.println("Row is null or does not exist.");
         }
-        */
+		 */
 
-        try {
-            Row headerRow = sheet.getRow(0);
-            int comparisonColumnIndex = headerRow.getLastCellNum();
-            
-            if (headerRow != null) {
-                // Get the number of cells in the row
-                int totalCells = headerRow.getLastCellNum();
-                System.out.println("Total Cells in the Row: " + totalCells);
+		try {
+			Row headerRow = sheet.getRow(0);
+			int comparisonColumnIndex = headerRow.getLastCellNum();
 
-                // Iterate over each cell in the row
-                for (int cellIndex = 0; cellIndex < totalCells; cellIndex++) {
-                    Cell cell = headerRow.getCell(cellIndex);
+			if (headerRow != null) {
+				// Get the number of cells in the row
+				int totalCells = headerRow.getLastCellNum();
+				System.out.println("Total Cells in the Row: " + totalCells);
 
-                    // Get the cell value as a string (use your utility if needed)
-                    String cellValue = (cell != null) ? getCellValueAsString(cell) : "EMPTY";
+				// Iterate over each cell in the row
+				for (int cellIndex = 0; cellIndex < totalCells; cellIndex++) {
+					Cell cell = headerRow.getCell(cellIndex);
 
-                    // Print the cell index and value
-                    System.out.println("Cell Index: " + cellIndex + ", Value: " + cellValue);
-                }
-            }
-            
-            headerRow.createCell(comparisonColumnIndex).setCellValue("Comparison Result");
+					// Get the cell value as a string (use your utility if needed)
+					String cellValue = (cell != null) ? getCellValueAsString(cell) : "EMPTY";
 
-            for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue;
-                Cell idCell = row.getCell(idColumnIndex);
-                Cell comparisonCell = row.createCell(comparisonColumnIndex);
+					// Print the cell index and value
+					System.out.println("Cell Index: " + cellIndex + ", Value: " + cellValue);
+				}
+			}
 
-                if (idCell != null) {
-                    String id = getCellValueAsString(idCell).trim();
-                    if (comparisonSet.contains(id)) {
-                        comparisonCell.setCellValue("Exist");
-                    } else {
-                        comparisonCell.setCellValue("Not Exist");
-                        missingBugDetails.add(Arrays.asList(id,
-                                getCellValueAsString(row.getCell(1)),
-                                getCellValueAsString(row.getCell(3)),
-                                getCellValueAsString(row.getCell(4)),
-                                "https://fintech-bs23.xyz/wp/" + id));
-                    }
-                } else {
-                    comparisonCell.setCellValue("Not Executed");
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+			headerRow.createCell(comparisonColumnIndex).setCellValue("Comparison Result");
 
-        try {
-            writeListToExcel(outputFilePath, "bug_details", missingBugDetails);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+			for (Row row : sheet) {
+				if (row.getRowNum() == 0) continue;
+				Cell idCell = row.getCell(idColumnIndex);
+				Cell comparisonCell = row.createCell(comparisonColumnIndex);
 
-    private static String getCellValueAsString(Cell cell) {
-        if (cell == null) {
-            return "";
-        }
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue().trim();
-            case NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString();
-                }
-                return String.valueOf((long) cell.getNumericCellValue());
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            case FORMULA:
-                return cell.getCellFormula();
-            default:
-                return "";
-        }
-    }
+				if (idCell != null) {
+					String id = getCellValueAsString(idCell).trim();
+					if (comparisonSet.contains(id)) {
+						comparisonCell.setCellValue("Exist");
+					} else {
+						comparisonCell.setCellValue("Not Exist");
+						missingBugDetails.add(Arrays.asList(id,
+								getCellValueAsString(row.getCell(1)),
+								getCellValueAsString(row.getCell(3)),
+								getCellValueAsString(row.getCell(4)),
+								"https://fintech-bs23.xyz/wp/" + id));
+					}
+				} else {
+					comparisonCell.setCellValue("Not Executed");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-    public static String getUniqueBugLinksWithSheetNames(String filePath, String outputDir, String outputFileSheetName) throws IOException {
-        Set<String> uniqueBugLinks = new LinkedHashSet<>();
-        List<List<String>> outputData = new ArrayList<>();
-        outputData.add(Arrays.asList("Bug ID", "Sheet Name", "Bug Link", "Status"));
+		try {
+			writeListToExcel(outputFilePath, "bug_details", missingBugDetails);
 
-        try (FileInputStream fis = new FileInputStream(new File(filePath));
-             Workbook workbook = new XSSFWorkbook(fis)) {
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
-        	// Fetch the skip list string from the configuration
-        	String skipSheetsString = config.get("UniqueBugLinksSheetName").asText();
+	private static String getCellValueAsString(Cell cell) {
+		if (cell == null) {
+			return "";
+		}
+		switch (cell.getCellType()) {
+		case STRING:
+			return cell.getStringCellValue().trim();
+		case NUMERIC:
+			if (DateUtil.isCellDateFormatted(cell)) {
+				return cell.getDateCellValue().toString();
+			}
+			return String.valueOf((long) cell.getNumericCellValue());
+		case BOOLEAN:
+			return String.valueOf(cell.getBooleanCellValue());
+		case FORMULA:
+			return cell.getCellFormula();
+		default:
+			return "";
+		}
+	}
 
-        	// Convert the comma-separated string into a list
-        	List<String> sheetsToSkip = Arrays.asList(skipSheetsString.split(",\\s*"));
+	public static String getUniqueBugLinksWithSheetNames(String filePath, String outputDir, String outputFileSheetName) throws IOException {
+		/* sample bug links: 
+		 * https://fintech-bs23.xyz/projects/ab-revamp/work_packages/28021/activity?query_id=1460
+		 * https://fintech-bs23.xyz/wp/28021
+		 * https://fintech-bs23.xyz/projects/ab-revamp/work_packages/28021/activity
+		 */
 
-        	for (Sheet sheet : workbook) {
-        	    String sheetName = sheet.getSheetName();
+		Set<String> uniqueBugLinks = new LinkedHashSet<>();
+		List<List<String>> outputData = new ArrayList<>();
+		outputData.add(Arrays.asList("Bug ID", "Sheet Name", "Bug Link", "Status"));
 
-        	    // Check if the sheet name is in the skip list (case-insensitive)
-        	    if (sheetsToSkip.stream().anyMatch(skipName -> skipName.equalsIgnoreCase(sheetName))) {
-        	        continue;
-        	    }
+		try (FileInputStream fis = new FileInputStream(new File(filePath));
+				Workbook workbook = new XSSFWorkbook(fis)) {
 
-        	    for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
-        	        Row row = sheet.getRow(rowIndex);
-        	        if (row == null) continue;
+			// Fetch the skip list string from the configuration
+			String skipSheetsString = config.get("UniqueBugLinksSheetName").asText();
 
-        	        Cell bugLinkCell = row.getCell(rtmBugLinkColumnIndex);
-        	        String bugLink = getCellValueAsString(bugLinkCell);
+			// Convert the comma-separated string into a list
+			List<String> sheetsToSkip = Arrays.asList(skipSheetsString.split(",\\s*"));
 
-        	        Cell statusCell = row.getCell(rtmStatusColumnIndex);
-        	        String status = getCellValueAsString(statusCell);
+			for (Sheet sheet : workbook) {
+				String sheetName = sheet.getSheetName();
 
-        	        if (!bugLink.isEmpty()) {
-        	            Pattern urlPattern = Pattern.compile("(https?://[\\w.-]+(/[\\w./-]*)?)");
-        	            Matcher matcher = urlPattern.matcher(bugLink);
+				// Check if the sheet name is in the skip list (case-insensitive)
+				if (sheetsToSkip.stream().anyMatch(skipName -> skipName.equalsIgnoreCase(sheetName))) {
+					continue;
+				}
 
-        	            while (matcher.find()) {
-        	                String extractedLink = matcher.group().trim();
-        	                if (!extractedLink.isEmpty() && uniqueBugLinks.add(extractedLink)) {
-        	                    String bugId = getBugIdFromLink(extractedLink);
-        	                    outputData.add(Arrays.asList(bugId, sheetName, extractedLink, status));
-        	                }
-        	            }
-        	        }
-        	    }
-        	}
+				for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+					Row row = sheet.getRow(rowIndex);
+					if (row == null) continue;
 
-        }
+					Cell bugLinkCell = row.getCell(rtmBugLinkColumnIndex);
+					String bugLink = getCellValueAsString(bugLinkCell);
 
-        String outputFile = outputDir + "UniqueBugLinks_"+timestamp.toString() + ".xlsx";
-        writeListToExcel(outputFile, outputFileSheetName, outputData);
+					Cell statusCell = row.getCell(rtmStatusColumnIndex);
+					String status = getCellValueAsString(statusCell);
 
-        return outputFile;
-    }
+					if (!bugLink.isEmpty()) {
+						// Regex to match all bug link patterns
+						Pattern urlPattern = Pattern.compile(
+								"(https?://[\\w.-]+/projects/[\\w-]+/work_packages/\\d+/activity(\\?query_id=\\d+)?)|" + // Pattern 1 & 3
+										"(https?://[\\w.-]+/wp/\\d+)"                                           // Pattern 2
+								);
 
-    public static void writeListToExcel(String filePath, String sheetName, List<List<String>> data) throws IOException {
-        try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet(sheetName);
+						Matcher matcher = urlPattern.matcher(bugLink);
 
-            for (int rowIndex = 0; rowIndex < data.size(); rowIndex++) {
-                Row row = sheet.createRow(rowIndex);
-                List<String> rowData = data.get(rowIndex);
+						while (matcher.find()) {
+							String extractedLink = matcher.group().trim();
+							if (!extractedLink.isEmpty() && uniqueBugLinks.add(extractedLink)) {
+								String bugId = getBugIdFromLink(extractedLink);
+								outputData.add(Arrays.asList(bugId, sheetName, extractedLink, status));
+							}
+						}
+					}
+				}
+			}
+		}
 
-                for (int colIndex = 0; colIndex < rowData.size(); colIndex++) {
-                    Cell cell = row.createCell(colIndex);
-                    cell.setCellValue(rowData.get(colIndex));
-                }
-            }
+		String outputFile = outputDir + "UniqueBugLinks_" + timestamp.toString() + ".xlsx";
+		writeListToExcel(outputFile, outputFileSheetName, outputData);
 
-            try (FileOutputStream fos = new FileOutputStream(new File(filePath))) {
-                workbook.write(fos);
-            }
-        }
-    }
+		return outputFile;
+	}
 
-    private static String dynamicDateTime() {
-        return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-    }
 
-    private static String getBugIdFromLink(String bugLink) {
-        String[] parts = bugLink.split("/");
-        return parts.length > 0 ? parts[parts.length - 1] : "";
-    }
+	public static void writeListToExcel(String filePath, String sheetName, List<List<String>> data) throws IOException {
+		try (Workbook workbook = new XSSFWorkbook()) {
+			Sheet sheet = workbook.createSheet(sheetName);
 
-    public static String createDynamicFolder(String mydir, String name, Boolean dynamic) {
-        String folderPath = mydir + name + (dynamic ? new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) : "") + File.separator;
-        File folder = new File(folderPath);
-        if (!folder.exists() && !folder.mkdirs()) {
-            throw new RuntimeException("Failed to create directory: " + folderPath);
-        }
-        return folderPath;
-    }
+			for (int rowIndex = 0; rowIndex < data.size(); rowIndex++) {
+				Row row = sheet.createRow(rowIndex);
+				List<String> rowData = data.get(rowIndex);
 
-    public static void handleFile(String sourceFilePath, String destinationDirPath, boolean move) throws IOException {
-        File sourceFile = new File(sourceFilePath);
-        File destinationDir = new File(destinationDirPath);
+				for (int colIndex = 0; colIndex < rowData.size(); colIndex++) {
+					Cell cell = row.createCell(colIndex);
+					cell.setCellValue(rowData.get(colIndex));
+				}
+			}
 
-        if (!sourceFile.exists() || !sourceFile.isFile()) {
-            throw new IOException("Source file not found: " + sourceFile.getAbsolutePath());
-        }
+			try (FileOutputStream fos = new FileOutputStream(new File(filePath))) {
+				workbook.write(fos);
+			}
+		}
+	}
 
-        if (!destinationDir.exists() && !destinationDir.mkdirs()) {
-            throw new IOException("Failed to create destination directory: " + destinationDir.getAbsolutePath());
-        }
+	private static String dynamicDateTime() {
+		return new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+	}
 
-        Path destinationPath = new File(destinationDir, sourceFile.getName()).toPath();
+	private static String getBugIdFromLink(String bugLink) {
+		// Adjust bug ID extraction to handle both URL patterns
+		if (bugLink.contains("/work_packages/")) {
+			String[] parts = bugLink.split("/work_packages/");
+			String idPart = parts.length > 1 ? parts[1] : "";
+			return idPart.split("[/?]")[0]; // Extracts the number before "?" or "/"
+		} else if (bugLink.contains("/wp/")) {
+			String[] parts = bugLink.split("/wp/");
+			return parts.length > 1 ? parts[1].split("[/?]")[0] : ""; // Extracts the number
+		}
+		return "";
+	}
 
-        if (move) {
-            Files.move(sourceFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-        } else {
-            Files.copy(sourceFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-        }
-    }
-    
-    public static void processSheetsForNAAndFail(String filePath, String outputDir) throws IOException {
+	public static String createDynamicFolder(String mydir, String name, Boolean dynamic) {
+		String folderPath = mydir + name + (dynamic ? new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) : "") + File.separator;
+		File folder = new File(folderPath);
+		if (!folder.exists() && !folder.mkdirs()) {
+			throw new RuntimeException("Failed to create directory: " + folderPath);
+		}
+		return folderPath;
+	}
+
+	public static void handleFile(String sourceFilePath, String destinationDirPath, boolean move) throws IOException {
+		File sourceFile = new File(sourceFilePath);
+		File destinationDir = new File(destinationDirPath);
+
+		if (!sourceFile.exists() || !sourceFile.isFile()) {
+			throw new IOException("Source file not found: " + sourceFile.getAbsolutePath());
+		}
+
+		if (!destinationDir.exists() && !destinationDir.mkdirs()) {
+			throw new IOException("Failed to create destination directory: " + destinationDir.getAbsolutePath());
+		}
+
+		Path destinationPath = new File(destinationDir, sourceFile.getName()).toPath();
+
+		if (move) {
+			Files.move(sourceFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+		} else {
+			Files.copy(sourceFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+		}
+	}
+
+	public static void processSheetsForNAAndFail(String filePath, String outputDir) throws IOException {
 		List<List<String>> outputData = new ArrayList<>();
 		outputData.add(Arrays.asList("Sheet Name", "Test Title", "Matched Type", "Extracted Value"));
 

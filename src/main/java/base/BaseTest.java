@@ -17,7 +17,7 @@ public abstract class BaseTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp(
             @Optional("web") String type, 
-            @Optional("firefox") String platformOrBrowser, 
+            @Optional("chrome") String platformOrBrowser, 
             @Optional("defaultDevice") String deviceName, 
             @Optional("defaultUUID") String udid
         ) {
