@@ -1,10 +1,19 @@
 {
+<<<<<<< Updated upstream
   "executionSuite": "Test Suite For ABBL Retail W4S22.xlsx",
   "rtmSheetsToSkip": "Cover Page, Cover_Page, uniq_items, For_QA_RFP_Wise_Feature_items,UAT_Backup_Accounts",
   "rtmStatusColumnIndex":7,
   "rtmCommentColumnIndex":9,
   "rtmBugLinkColumnIndex":10,
   "openProjectData": "BS23_FinTech_Projects_Work_packages_2025-01-2320250123-24055-ud64r9.xlsx",
+=======
+  "executionSuite": "NCC Services Request Execution Suite Round 2.xlsx",
+  "rtmSheetsToSkip": "Cover Page, Cover_Page, uniq_items",
+  "rtmStatusColumnIndex":8,
+  "rtmCommentColumnIndex":9,
+  "rtmBugLinkColumnIndex":10,
+  "openProjectData": "OP_Bug_List_Service_Request.xlsx",
+>>>>>>> Stashed changes
   "UniqueBugLinksSheetName": "UniqueBugLinks",
   "openProjectSheetName": "Work packages",
   "uniqueBugsIdColumnIndex": 0,

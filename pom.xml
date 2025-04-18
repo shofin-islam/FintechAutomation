@@ -100,4 +100,20 @@
 	</dependency>
 
   </dependencies>
+  
+  <build>
+    <plugins>
+        <!-- Maven Surefire Plugin for running tests -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>3.0.0-M8</version>
+            <configuration>
+               <suiteXmlFiles>
+                    <suiteXmlFile>src/test/resources/${suite}</suiteXmlFile>
+                </suiteXmlFiles>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
 </project>

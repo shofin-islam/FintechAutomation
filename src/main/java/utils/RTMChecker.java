@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 public class RTMChecker {
 
+<<<<<<< Updated upstream
 	static String baseDir; // Base directory for files outside the project
 	static String timestamp;
 	static JsonNode config;
@@ -32,6 +33,41 @@ public class RTMChecker {
 		timestamp = dynamicDateTime();
 		// Load the JSON configuration file
 		config = loadConfig(baseDir + "compare.json");
+=======
+    static String baseDir; // Base directory for files outside the project
+    static String timestamp;
+    static JsonNode config;
+    static String version = "1.1";
+    static Integer rtmBugLinkColumnIndex;
+    static Integer rtmStatusColumnIndex;
+    static Integer rtmCommentColumnIndex;
+
+    public static void main(String[] args) throws Exception {
+    	
+    	System.out.println("Executing RTM Checker Version: "+version);
+    	
+        // Initialize base directory (external location for inputs and outputs)
+//    	baseDir = Paths.get(System.getProperty("user.dir")).getParent().toString() + File.separator;
+        baseDir = System.getProperty("user.dir") + File.separator;
+        timestamp = dynamicDateTime();
+        // Load the JSON configuration file
+        config = loadConfig(baseDir + "compare.json");
+
+        // Extract file paths and configuration values from JSON
+        String executionSuiteFile = baseDir + config.get("executionSuite").asText();
+        String openProjectData = baseDir + config.get("openProjectData").asText();
+        String bugLinkFileSheetName = config.get("UniqueBugLinksSheetName").asText();
+        String openProjectSheet = config.get("openProjectSheetName").asText();
+        String uniqueBugsIdColumnIndex = config.get("uniqueBugsIdColumnIndex").asText();
+        String openProjectIdColumnIndex = config.get("openProjectIdColumnIndex").asText();
+        rtmBugLinkColumnIndex = config.get("rtmBugLinkColumnIndex").asInt();
+        rtmStatusColumnIndex = config.get("rtmStatusColumnIndex").asInt();
+        rtmCommentColumnIndex = config.get("rtmCommentColumnIndex").asInt();
+
+        // Set up output directories outside the project
+        String parentDir = createDynamicFolder(baseDir, "Results", false);
+        String resultDir = createDynamicFolder(parentDir, "Output_", true);
+>>>>>>> Stashed changes
 
 		// Extract file paths and configuration values from JSON
 		String executionSuiteFile = baseDir + config.get("executionSuite").asText();
@@ -56,9 +92,15 @@ public class RTMChecker {
 		// Handle file operations
 		handleFile(executionSuiteFile, resultDir, false);
 
+<<<<<<< Updated upstream
 		// Load EX1 and EX2 files
 		Workbook ex1Workbook = new XSSFWorkbook(new FileInputStream(bugLinksFile));
 		Workbook ex2Workbook = new XSSFWorkbook(new FileInputStream(openProjectData));
+=======
+        // Read IDs from EX1 (Column A) into a Set
+        Set<String> ex1Ids = getIdsFromSheet(ex1Sheet, Integer.parseInt(uniqueBugsIdColumnIndex));
+        System.out.println("Bug count: " + ex1Ids.size());
+>>>>>>> Stashed changes
 
 		// Get sheets
 		Sheet ex1Sheet = ex1Workbook.getSheet(bugLinkFileSheetName);
@@ -70,10 +112,19 @@ public class RTMChecker {
 
 		// Generate dynamic file names for outputs
 
+<<<<<<< Updated upstream
 		String comparedFilePath = resultDir + "Compared_" + timestamp + ".xlsx";
 		String missingBugDetailsFilePath = resultDir + "MissingBugDetails_" + timestamp + ".xlsx";
 
 		compareAndAddColumn(ex2Sheet, Integer.parseInt(openProjectIdColumnIndex), ex1Ids, missingBugDetailsFilePath);
+=======
+        ex1Workbook.close();
+        ex2Workbook.close();
+        
+        System.out.println("Comparison Complete and Files Saved To : "+comparedFilePath);
+        System.out.println("Missing Bug List In RTM Saved To : "+missingBugDetailsFilePath);
+    }
+>>>>>>> Stashed changes
 
 		// Write the comparison result to a file
 		try (FileOutputStream comp = new FileOutputStream(comparedFilePath)) {
@@ -103,6 +154,7 @@ public class RTMChecker {
 		Set<String> ids = new HashSet<>();
 		if (sheetName == null) throw new IllegalArgumentException("Sheet " + sheetName + " does not exist.");
 
+<<<<<<< Updated upstream
 		for (Row row : sheetName) {
 			if (row.getRowNum() == 0) continue; // Skip header row
 			Cell cell = row.getCell(columnIndex);
@@ -121,6 +173,12 @@ public class RTMChecker {
 		missingBugDetails.add(Arrays.asList("Bug ID", "Subject", "Status", "Author", "Link"));
 
 		/*
+=======
+        List<List<String>> missingBugDetails = new ArrayList<>();
+        missingBugDetails.add(Arrays.asList("Bug ID", "Subject", "Status", "Author", "Link"));
+        
+        /*
+>>>>>>> Stashed changes
         Row headerRow = sheet.getRow(0);
         if (headerRow != null) {
             // Get the number of cells in the row
@@ -140,6 +198,7 @@ public class RTMChecker {
         } else {
             System.out.println("Row is null or does not exist.");
         }
+<<<<<<< Updated upstream
 		 */
 
 		try {
@@ -150,6 +209,65 @@ public class RTMChecker {
 				// Get the number of cells in the row
 				int totalCells = headerRow.getLastCellNum();
 				System.out.println("Total Cells in the Row: " + totalCells);
+=======
+        */
+
+        try {
+            Row headerRow = sheet.getRow(0);
+            int comparisonColumnIndex = headerRow.getLastCellNum();
+            
+            if (headerRow != null) {
+                // Get the number of cells in the row
+                int totalCells = headerRow.getLastCellNum();
+                System.out.println("Total Cells in the Row: " + totalCells);
+
+                // Iterate over each cell in the row
+                for (int cellIndex = 0; cellIndex < totalCells; cellIndex++) {
+                    Cell cell = headerRow.getCell(cellIndex);
+
+                    // Get the cell value as a string (use your utility if needed)
+                    String cellValue = (cell != null) ? getCellValueAsString(cell) : "EMPTY";
+
+                    // Print the cell index and value
+                    System.out.println("Cell Index: " + cellIndex + ", Value: " + cellValue);
+                }
+            }
+            
+            headerRow.createCell(comparisonColumnIndex).setCellValue("Comparison Result");
+
+            for (Row row : sheet) {
+                if (row.getRowNum() == 0) continue;
+                Cell idCell = row.getCell(idColumnIndex);
+                Cell comparisonCell = row.createCell(comparisonColumnIndex);
+
+                if (idCell != null) {
+                    String id = getCellValueAsString(idCell).trim();
+                    if (comparisonSet.contains(id)) {
+                        comparisonCell.setCellValue("Exist");
+                    } else {
+                        comparisonCell.setCellValue("Not Exist");
+                        missingBugDetails.add(Arrays.asList(id,
+                                getCellValueAsString(row.getCell(1)),
+                                getCellValueAsString(row.getCell(3)),
+                                getCellValueAsString(row.getCell(4)),
+                                "https://fintech-bs23.xyz/wp/" + id));
+                    }
+                } else {
+                    comparisonCell.setCellValue("Not Executed");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            writeListToExcel(outputFilePath, "bug_details", missingBugDetails);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+>>>>>>> Stashed changes
 
 				// Iterate over each cell in the row
 				for (int cellIndex = 0; cellIndex < totalCells; cellIndex++) {
@@ -198,6 +316,7 @@ public class RTMChecker {
 		}
 	}
 
+<<<<<<< Updated upstream
 	private static String getCellValueAsString(Cell cell) {
 		if (cell == null) {
 			return "";
@@ -225,6 +344,13 @@ public class RTMChecker {
 		 * https://fintech-bs23.xyz/wp/28021
 		 * https://fintech-bs23.xyz/projects/ab-revamp/work_packages/28021/activity
 		 */
+=======
+        	        Cell bugLinkCell = row.getCell(rtmBugLinkColumnIndex);
+        	        String bugLink = getCellValueAsString(bugLinkCell);
+
+        	        Cell statusCell = row.getCell(rtmStatusColumnIndex);
+        	        String status = getCellValueAsString(statusCell);
+>>>>>>> Stashed changes
 
 		Set<String> uniqueBugLinks = new LinkedHashSet<>();
 		List<List<String>> outputData = new ArrayList<>();

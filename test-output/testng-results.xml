@@ -2,12 +2,21 @@
 <testng-results ignored="0" total="4" passed="4" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
+<<<<<<< Updated upstream
   <suite started-at="2025-01-21T01:00:05 GMT+06:00" name="Parallel Execution Suite" finished-at="2025-01-21T01:00:24 GMT+06:00" duration-ms="19769">
     <groups>
     </groups>
     <test started-at="2025-01-21T01:00:05 GMT+06:00" name="Web Tests - chrome" finished-at="2025-01-21T01:00:24 GMT+06:00" duration-ms="19616">
       <class name="web.SampleWebTest">
         <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T01:00:05 GMT+06:00" name="setUp" finished-at="2025-01-21T01:00:06 GMT+06:00" duration-ms="1861" status="PASS">
+=======
+  <suite started-at="2025-04-18T00:55:36 BDT" name="Parallel Execution Suite" finished-at="2025-04-18T00:55:58 BDT" duration-ms="22231">
+    <groups>
+    </groups>
+    <test started-at="2025-04-18T00:55:36 BDT" name="Web Tests - firefox" finished-at="2025-04-18T00:55:54 BDT" duration-ms="17319">
+      <class name="web.SampleWebTest">
+        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@2cf3d63b]" started-at="2025-04-18T00:55:36 BDT" name="setUp" finished-at="2025-04-18T00:55:37 BDT" duration-ms="1289" status="PASS">
+>>>>>>> Stashed changes
           <params>
             <param index="0">
               <value>
@@ -33,6 +42,7 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
+<<<<<<< Updated upstream
         <test-method signature="testBingHomePage()[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T01:00:06 GMT+06:00" name="testBingHomePage" finished-at="2025-01-21T01:00:13 GMT+06:00" duration-ms="7024" status="PASS">
           <reporter-output>
           </reporter-output>
@@ -42,6 +52,17 @@
           </reporter-output>
         </test-method> <!-- tearDown -->
         <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T01:00:14 GMT+06:00" name="setUp" finished-at="2025-01-21T01:00:16 GMT+06:00" duration-ms="1898" status="PASS">
+=======
+        <test-method signature="testBingHomePage()[pri:0, instance:web.SampleWebTest@2cf3d63b]" started-at="2025-04-18T00:55:37 BDT" name="testBingHomePage" finished-at="2025-04-18T00:55:44 BDT" duration-ms="6402" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testBingHomePage -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@2cf3d63b]" started-at="2025-04-18T00:55:44 BDT" name="tearDown" finished-at="2025-04-18T00:55:44 BDT" duration-ms="369" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@2cf3d63b]" started-at="2025-04-18T00:55:44 BDT" name="setUp" finished-at="2025-04-18T00:55:46 BDT" duration-ms="1259" status="PASS">
+>>>>>>> Stashed changes
           <params>
             <param index="0">
               <value>
@@ -67,11 +88,91 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setUp -->
+<<<<<<< Updated upstream
         <test-method signature="testGoogleHomePage()[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T01:00:16 GMT+06:00" name="testGoogleHomePage" finished-at="2025-01-21T01:00:24 GMT+06:00" duration-ms="7864" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- testGoogleHomePage -->
         <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@7d8995e]" started-at="2025-01-21T01:00:24 GMT+06:00" name="tearDown" finished-at="2025-01-21T01:00:24 GMT+06:00" duration-ms="397" status="PASS">
+=======
+        <test-method signature="testGoogleHomePage()[pri:0, instance:web.SampleWebTest@2cf3d63b]" started-at="2025-04-18T00:55:46 BDT" name="testGoogleHomePage" finished-at="2025-04-18T00:55:53 BDT" duration-ms="7644" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGoogleHomePage -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@2cf3d63b]" started-at="2025-04-18T00:55:53 BDT" name="tearDown" finished-at="2025-04-18T00:55:54 BDT" duration-ms="346" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- web.SampleWebTest -->
+    </test> <!-- Web Tests - firefox -->
+    <test started-at="2025-04-18T00:55:36 BDT" name="Web Tests - chrome" finished-at="2025-04-18T00:55:58 BDT" duration-ms="22231">
+      <class name="web.SampleWebTest">
+        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@47e2e487]" started-at="2025-04-18T00:55:36 BDT" name="setUp" finished-at="2025-04-18T00:55:44 BDT" duration-ms="8073" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[web]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[chrome]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[]]>
+              </value>
+            </param>
+            <param index="3">
+              <value>
+                <![CDATA[]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="testBingHomePage()[pri:0, instance:web.SampleWebTest@47e2e487]" started-at="2025-04-18T00:55:44 BDT" name="testBingHomePage" finished-at="2025-04-18T00:55:51 BDT" duration-ms="6355" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testBingHomePage -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@47e2e487]" started-at="2025-04-18T00:55:51 BDT" name="tearDown" finished-at="2025-04-18T00:55:51 BDT" duration-ms="112" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+        <test-method is-config="true" signature="setUp(java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:web.SampleWebTest@47e2e487]" started-at="2025-04-18T00:55:51 BDT" name="setUp" finished-at="2025-04-18T00:55:51 BDT" duration-ms="625" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[web]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[chrome]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[]]>
+              </value>
+            </param>
+            <param index="3">
+              <value>
+                <![CDATA[]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="testGoogleHomePage()[pri:0, instance:web.SampleWebTest@47e2e487]" started-at="2025-04-18T00:55:51 BDT" name="testGoogleHomePage" finished-at="2025-04-18T00:55:58 BDT" duration-ms="6956" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testGoogleHomePage -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:web.SampleWebTest@47e2e487]" started-at="2025-04-18T00:55:58 BDT" name="tearDown" finished-at="2025-04-18T00:55:58 BDT" duration-ms="96" status="PASS">
+>>>>>>> Stashed changes
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
