@@ -15,14 +15,23 @@ public abstract class BaseTest {
 
     @Parameters({"type", "platformOrBrowser", "deviceName", "udid"})
     @BeforeMethod(alwaysRun = true)
-    public void setUp(String type, String platformOrBrowser, String deviceName, String udid) {
-        driverInstance = DriverFactory.getDriver(type, platformOrBrowser, deviceName, udid);
-        if (type.equalsIgnoreCase("web")) {
-            webDriver.set((WebDriver) driverInstance.createDriver());
-        } else if (type.equalsIgnoreCase("mobile")) {
-            mobileDriver.set((AppiumDriver) driverInstance.createDriver());
+    public void setUp(
+            @Optional("web") String type, 
+            @Optional("chrome") String platformOrBrowser, 
+            @Optional("defaultDevice") String deviceName, 
+            @Optional("defaultUUID") String udid
+        ) {
+            // Assign default values if running without testng.xml
+            type = (type == null || type.isEmpty()) ? "web" : type;
+            platformOrBrowser = (platformOrBrowser == null || platformOrBrowser.isEmpty()) ? "chrome" : platformOrBrowser;
+
+            driverInstance = DriverFactory.getDriver(type, platformOrBrowser, deviceName, udid);
+            if (type.equalsIgnoreCase("web")) {
+                webDriver.set((WebDriver) driverInstance.createDriver());
+            } else if (type.equalsIgnoreCase("mobile")) {
+                mobileDriver.set((AppiumDriver) driverInstance.createDriver());
+            }
         }
-    }
     
 
     @AfterMethod(alwaysRun = true)
